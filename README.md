@@ -1,6 +1,6 @@
 # ACE Clustering (Local & Distributed)
 
-This repository contains the implementation of the **ACE (Approximate Consensus Ensemble)** clustering framework. It supports running standard algorithms locally or in a distributed manner across AWS EC2 and S3 instances.
+This repository contains the implementation of the **ACE** framework. It supports running standard algorithms locally or in a distributed manner across AWS EC2 and S3 instances.
 
 ## Environments & Prerequisites
 * **Python**: 3.9+
@@ -10,7 +10,7 @@ This repository contains the implementation of the **ACE (Approximate Consensus 
 
 ## Configuration & Credentials (For AWS Mode)
 
-To run the pipeline in AWS mode, you must set up your credentials and environment configuration.
+The system uses an **IAM Instance Profile (Role)** attached to the EC2 instances.
 
 1. **Local AWS Profile**:
    Ensure you have configured your AWS CLI credentials on your local machine:
@@ -18,16 +18,24 @@ To run the pipeline in AWS mode, you must set up your credentials and environmen
    aws configure
    ```
 
-2. **Project Configuration File**:
-   Copy `config.template.json` to `config.json` (this file is ignored by Git to protect your credentials):
+2. **Create the IAM Role and Instance Profile**:
+   You can easily set up the required IAM role, policy, and instance profile restricted strictly to the project's S3 bucket by running the helper script:
+   ```bash
+   bash Setup/setup_iam.sh
+   ```
+   This will create a custom policy called `ACE-S3-Bucket-Policy` and an EC2 role/instance profile called `ACE-EC2-S3-Role`.
+
+3. **Project Configuration File**:
+   Copy `config.template.json` to `config.json` (this file is ignored by Git to protect your configuration settings):
    ```bash
    cp config.template.json config.json
    ```
-   Edit the newly created `config.json` file and enter your values:
+   Edit `config.json` and enter your values:
    * `AMI_ID`: Your custom pre-baked EC2 AMI (with python libraries pre-installed).
    * `REGION`: The AWS region of your resources (e.g. `us-east-2`).
    * `BUCKET_NAME`: The S3 bucket name where datasets and results will be transferred.
    * `INSTANCE_TYPE`: The EC2 instance type for workers (default: `t3.micro`).
+   * `IAM_INSTANCE_PROFILE`: The name of the IAM Instance Profile you created (e.g. `ACE-EC2-S3-Role`).
 
 ---
 
