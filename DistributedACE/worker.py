@@ -13,7 +13,6 @@ def parse_args():
     parser.add_argument("--bucket", type=str, default="ma-njit-ace", help="S3 bucket name")
     parser.add_argument("--s3-key", type=str, default="dataset/letter.csv", help="S3 key of the dataset")
     parser.add_argument("--batch-index", type=int, required=True, help="Batch index to process")
-    parser.add_argument("--batch-count", type=int, required=True, help="Total number of batches")
     parser.add_argument("--algo", type=str, default="HAC", help="Clustering algorithm name (HAC, DBSCAN, GMM, SC, AP)")
     parser.add_argument("--n-clusters", type=int, default=3, help="Number of clusters")
     parser.add_argument("--params", type=str, default="{}", help="JSON string of algorithm hyperparameters")
@@ -98,15 +97,8 @@ def main():
     local_data_path = f"/tmp/letter_{args.batch_index}.csv"    
     download_from_s3(args.bucket, args.s3_key, local_data_path)
     
-    df = pd.read_csv(local_data_path)    
-    batch_size = int(len(df) / args.batch_count)
-    start_idx = args.batch_index * batch_size
-    if args.batch_index == args.batch_count - 1:
-        df_batch = df.iloc[start_idx:].copy()
-    else:
-        df_batch = df.iloc[start_idx:start_idx + batch_size].copy()
-        
-    print(f"Batch {args.batch_index}: Processing {len(df_batch)} records (indices {start_idx} to {start_idx + len(df_batch)}).")
+    df_batch = pd.read_csv(local_data_path)    
+    print(f"Batch {args.batch_index}: Processing {len(df_batch)} records.")
     
     if "class" in df_batch.columns:
         y = df_batch["class"].to_numpy()
