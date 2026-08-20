@@ -1,0 +1,6 @@
+{
+  "AMI_ID": "your-custom-ami-id",
+  "REGION": "us-east-2",
+  "BUCKET_NAME": "your-s3-bucket-name",
+  "INSTANCE_TYPE": "t3.micro"
+}
