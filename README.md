@@ -1,6 +1,18 @@
-# ACE Clustering (Local & Distributed)
+# ACE (**<u>A</u>**lgorithm-independent **<u>C</u>**lustering Acc**<u>E</u>**leration and parallelization)
 
-This repository contains the implementation of the **ACE** framework. It supports running standard algorithms locally or in a distributed manner across AWS EC2 and S3 instances.
+This repository contains the implementation of the **ACE** framework. It supports running standard clustering algorithms in two parallelized execution modes:
+* **Local Parallel Mode**: Distributes the workload across concurrent threads on a single local machine.
+* **AWS Distributed Mode**: Distributes the workload across independent AWS EC2 worker instances (nodes), coordinated via S3.
+
+## Architecture
+
+![ACE Architecture](Figures/Architecture.png)
+
+ACE operates in a black-box, algorithm-independent manner, requiring only the black-box clustering implementation and its parameter ranges. The framework consists of four main stages:
+1. **Data Partitioning**: Shuffles and divides the dataset $D$ into $n$ smaller partitions ($S_1, S_2, \dots, S_n$) to reduce memory usage and enable parallelization.
+2. **Parallel Parameter Tuning (HAPV)**: Conducts a parallel search to determine the hyperparameter values with the highest accuracy (HAPV) using a validation clustering algorithm.
+3. **Label Generation**: Concurrently runs the clustering algorithm on all partitions using the tuned HAPV parameters.
+4. **Label Merging**: Integrates the local partition clustering labels ($l_1, l_2, \dots, l_n$) into a unified global clustering output ($l$).
 
 ## Environments & Prerequisites
 * **Python**: 3.9+
@@ -43,13 +55,13 @@ The system uses an **IAM Instance Profile (Role)** attached to the EC2 instances
 
 Run the unified `run.py` script at the root of the repository with your chosen mode and parameters.
 
-### 1. Local Mode
-Runs the clustering algorithm locally on your machine sequentially.
+### 1. Local Parallel Mode
+Runs the clustering algorithm locally on your machine, parallelizing the workload across multiple threads.
 ```bash
 python run.py local Dataset/letter.csv HAC
 ```
 
-### 2. AWS Mode (Distributed)
+### 2. AWS Distributed Mode
 Splits the dataset, launches EC2 worker instances in parallel to perform clustering, pulls results, performs the hierarchical merge locally, and automatically terminates all instances and flushes the S3 bucket.
 ```bash
 python run.py aws Dataset/letter.csv HAC
