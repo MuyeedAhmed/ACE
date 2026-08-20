@@ -1,6 +1,6 @@
 # ACE
 
-This repository contains the implementation of **ACE**. This is a temporary repository for our paper submission in Euro-Par'24.
+This repository contains the implementation of **ACE**.
 
 ## Environments
 * Python 3.9+
