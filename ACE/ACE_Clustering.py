@@ -167,6 +167,11 @@ class ACE_Clustering:
         self.parameters[0][2] = list(itertools.product(eps, min_samples))
     
     def determineParam(self):
+        sem = threading.Semaphore(4)
+        def worker_with_sem(*args):
+            with sem:
+                self.worker_determineParam(*args)
+
         batch_index = 0
         for params in self.parameters:
             threads = []
@@ -177,7 +182,7 @@ class ACE_Clustering:
             for p_v_i in range(len(params[2])):
                 params[1] = params[2][p_v_i]
                 parameters_to_send = [p[1] for p in self.parameters]
-                t = threading.Thread(target=self.worker_determineParam, args=(parameters_to_send,self.X_batches[batch_index], self.y_batches[batch_index], batch_index, p_v_i))
+                t = threading.Thread(target=worker_with_sem, args=(parameters_to_send,self.X_batches[batch_index], self.y_batches[batch_index], batch_index, p_v_i))
                 threads.append(t)
                 t.start()
                 if batch_index == self.batch_count-1:
