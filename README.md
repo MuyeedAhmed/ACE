@@ -1,8 +1,13 @@
-# ACE (**<u>A</u>**lgorithm-independent **<u>C</u>**lustering Acc**<u>E</u>**leration and parallelization)
+# ACE (<u>𝗔</u>lgorithm-independent <u>𝗖</u>lustering Acc<u>𝗘</u>leration and parallelization)
 
 This repository contains the implementation of the **ACE** framework. It supports running standard clustering algorithms in two parallelized execution modes:
 * **Local Parallel Mode**: Distributes the workload across concurrent threads on a single local machine.
 * **AWS Distributed Mode**: Distributes the workload across independent AWS EC2 worker instances (nodes), coordinated via S3.
+
+This repository contains the official implementation of the paper:
+[**ACE: Algorithm-Independent Acceleration and Parallelization of Clustering Implementations**](https://par.nsf.gov/servlets/purl/10570252) (PPAM24).
+
+[![Paper DOI](https://img.shields.io/badge/DOI-10.1007%2F978--3--031--85697--6__11-blue.svg)](https://doi.org/10.1007/978-3-031-85697-6_11)
 
 ## Architecture
 
@@ -74,3 +79,24 @@ python run.py aws Dataset/letter.csv HAC
 * `--n-clusters`: Number of clusters to find (default: `3`).
 * `--bucket`: Override S3 bucket name.
 * `--workers`: Number of EC2 instances to launch in parallel (default: `4`).
+
+---
+
+## Citation
+
+```bibtex
+@inproceedings{DBLP:conf/ppam/AhmedN24,
+  author       = {Muyeed Ahmed and Iulian Neamtiu},
+  title        = {ACE: Algorithm-Independent Acceleration and Parallelization of Clustering Implementations},
+  booktitle    = {Parallel Processing and Applied Mathematics - 15th International Conference,
+                  {PPAM} 2024, Camogli, Italy, September 8-11, 2024, Revised Selected Papers,
+                  Part {I}},
+  series       = {Lecture Notes in Computer Science},
+  volume       = {15431},
+  pages        = {161--176},
+  publisher    = {Springer},
+  year         = {2024},
+  url          = {https://doi.org/10.1007/978-3-031-77864-3_13},
+  doi          = {10.1007/978-3-031-77864-3_13}
+}
+```
