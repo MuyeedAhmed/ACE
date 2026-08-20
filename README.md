@@ -5,7 +5,7 @@ This repository contains the implementation of the **ACE** framework. It support
 * **AWS Distributed Mode**: Distributes the workload across independent AWS EC2 worker instances (nodes), coordinated via S3.
 
 This repository contains the official implementation of the paper:
-[**ACE: Algorithm-Independent Acceleration and Parallelization of Clustering Implementations**](https://par.nsf.gov/servlets/purl/10570252) (PPAM24).
+[**ACE: Algorithm-Independent Acceleration and Parallelization of Clustering Implementations**](https://link.springer.com/chapter/10.1007/978-3-031-85697-6_11) (PPAM24).
 
 [![Paper DOI](https://img.shields.io/badge/DOI-10.1007%2F978--3--031--85697--6__11-blue.svg)](https://doi.org/10.1007/978-3-031-85697-6_11)
 
@@ -85,7 +85,7 @@ python run.py aws Dataset/letter.csv HAC
 ## Citation
 
 ```bibtex
-@inproceedings{DBLP:conf/ppam/AhmedN24,
+@inproceedings{ppam24ahmed,
   author       = {Muyeed Ahmed and Iulian Neamtiu},
   title        = {ACE: Algorithm-Independent Acceleration and Parallelization of Clustering Implementations},
   booktitle    = {Parallel Processing and Applied Mathematics - 15th International Conference,
