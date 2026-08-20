@@ -86,7 +86,6 @@ for attempt in {{1..15}}; do
     sleep 2
 done
 
-# 1. Download code from S3 with retries (in case IAM role is still propagating)
 echo "=== Downloading worker script from S3 ==="
 for attempt in {{1..12}}; do
     if aws s3 cp s3://{bucket}/{worker_script_key} /home/ec2-user/worker.py --region {REGION}; then
@@ -98,7 +97,6 @@ for attempt in {{1..12}}; do
 done
 chown ec2-user:ec2-user /home/ec2-user/worker.py
 
-# 2. Execute clustering script passing tuned parameters
 echo "=== Running worker script for batch {i} ==="
 su - ec2-user -c "python3 /home/ec2-user/worker.py --bucket {bucket} --s3-key {split_s3_key} --batch-index {i} --algo {algo} --n-clusters {n_clusters} --params '{params_json}'"
 echo "=== Worker {i} Run Finished ==="
@@ -142,11 +140,10 @@ def wait_for_s3_results(s3_client, bucket, num_workers, instances=None):
                 try:
                     inst.reload()
                 except Exception:
-                    pass  # Ignore transient API reload issues
+                    pass
             
             states = [inst.state['Name'] for inst in instances]
             if any(state in ['terminated', 'stopped', 'shutting-down'] for state in states):
-                # Double-check one final time if all files are in S3 (in case they uploaded just before shutdown)
                 response = s3_client.list_objects_v2(Bucket=bucket, Prefix="output/")
                 existing_keys = [obj['Key'] for obj in response.get('Contents', [])]
                 if all(key in existing_keys for key in expected_files):
@@ -335,10 +332,8 @@ def main():
                 upload_file_to_s3(s3_client, split_local_path, args.bucket, split_s3_key)
                 os.remove(split_local_path)
             
-            # 2. Upload worker script to S3
             upload_file_to_s3(s3_client, "DistributedACE/worker.py", args.bucket, worker_script_s3_key)
             
-            # 3. Launch workers
             instances = launch_ec2_workers(
                 args.bucket, filename, worker_script_s3_key, 
                 args.algo, args.n_clusters, args.workers, params_json
