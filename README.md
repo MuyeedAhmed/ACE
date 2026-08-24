@@ -85,17 +85,17 @@ python run.py aws Dataset/letter.csv HAC
 ## Citation
 
 ```bibtex
-@inproceedings{10.1007/978-3-031-85697-6_11,
-author = {Ahmed, Muyeed and Neamtiu, Iulian},
-title = {ACE: Algorithm-Independent Acceleration and&nbsp;Parallelization of&nbsp;Clustering Implementations},
-year = {2024},
-isbn = {978-3-031-85696-9},
-publisher = {Springer-Verlag},
-address = {Berlin, Heidelberg},
-url = {https://doi.org/10.1007/978-3-031-85697-6_11},
-doi = {10.1007/978-3-031-85697-6_11},
-booktitle = {Parallel Processing and Applied Mathematics: 15th International Conference, PPAM 2024},
-pages = {161–176},
-location = {Ostrava, Czech Republic}
+@inproceedings{ppam24ahmed,
+   author = {Ahmed, Muyeed and Neamtiu, Iulian},
+   title = {ACE: Algorithm-Independent Acceleration and&nbsp;Parallelization of&nbsp;Clustering Implementations},
+   year = {2024},
+   isbn = {978-3-031-85696-9},
+   publisher = {Springer-Verlag},
+   address = {Berlin, Heidelberg},
+   url = {https://doi.org/10.1007/978-3-031-85697-6_11},
+   doi = {10.1007/978-3-031-85697-6_11},
+   booktitle = {Parallel Processing and Applied Mathematics: 15th International Conference, PPAM 2024},
+   pages = {161–176},
+   location = {Ostrava, Czech Republic}
 }
 ```
