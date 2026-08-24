@@ -1,6 +1,10 @@
-# ACE - <u>𝗔</u>lgorithm-independent <u>𝗖</u>lustering Acc<u>𝗘</u>leration and Parallelization
+# ACE Clustering (Local & Distributed)
 
-This repository contains the implementation of the **ACE** framework. It supports running standard clustering algorithms in two parallelized execution modes:
+[![CI Pipeline](https://github.com/MuyeedAhmed/ACE/actions/workflows/ci.yml/badge.svg)](https://github.com/MuyeedAhmed/ACE/actions/workflows/ci.yml)
+[![CI Distributed Pipeline](https://github.com/MuyeedAhmed/ACE/actions/workflows/ci-distributed.yml/badge.svg)](https://github.com/MuyeedAhmed/ACE/actions/workflows/ci-distributed.yml)
+[![CD Build and Publish Docker](https://github.com/MuyeedAhmed/ACE/actions/workflows/cd-docker.yml/badge.svg)](https://github.com/MuyeedAhmed/ACE/actions/workflows/cd-docker.yml)
+
+This repository contains the implementation of the **ACE** framework. It supports running standard algorithms locally or in a distributed manner across AWS EC2 and S3 instances.:
 * **Local Parallel Mode**: Distributes the workload across concurrent threads on a single local machine.
 * **AWS Distributed Mode**: Distributes the workload across independent AWS EC2 worker instances (nodes), coordinated via S3.
 
@@ -79,6 +83,38 @@ python run.py aws Dataset/letter.csv HAC
 * `--n-clusters`: Number of clusters to find (default: `3`).
 * `--bucket`: Override S3 bucket name.
 * `--workers`: Number of EC2 instances to launch in parallel (default: `4`).
+
+---
+
+## Testing
+
+To run the automated tests locally, make sure you have the dependencies installed and run `pytest`:
+```bash
+python -m pytest tests/
+```
+
+## Docker Usage
+
+
+Pulling from GitHub Container Registry (GHCR):
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/muyeedahmed/ace:latest
+
+# Run local clustering (mounting local Dataset and ClusteringOutput directories)
+docker run -v "$(pwd)/Dataset:/app/Dataset" -v "$(pwd)/ClusteringOutput:/app/ClusteringOutput" ghcr.io/muyeedahmed/ace:latest local Dataset/letter.csv HAC
+```
+
+Building the Image Locally:
+
+```bash
+# Build the image
+docker build -t ace-clustering .
+
+# Run the local image
+docker run -v "$(pwd)/Dataset:/app/Dataset" -v "$(pwd)/ClusteringOutput:/app/ClusteringOutput" ace-clustering local Dataset/letter.csv HAC
+```
 
 ---
 
