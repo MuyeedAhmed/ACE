@@ -1,4 +1,4 @@
-# ACE (<u>𝗔</u>lgorithm-independent <u>𝗖</u>lustering Acc<u>𝗘</u>leration and parallelization)
+# ACE - <u>𝗔</u>lgorithm-independent <u>𝗖</u>lustering Acc<u>𝗘</u>leration and Parallelization
 
 This repository contains the implementation of the **ACE** framework. It supports running standard clustering algorithms in two parallelized execution modes:
 * **Local Parallel Mode**: Distributes the workload across concurrent threads on a single local machine.
