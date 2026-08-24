@@ -7,6 +7,7 @@ on:
       - 'ACE/**'
       - 'tests/**'
       - 'run.py'
+      - 'app.py'
       - 'requirements.txt'
       - '.github/workflows/ci.yml'
   pull_request:
@@ -15,6 +16,7 @@ on:
       - 'ACE/**'
       - 'tests/**'
       - 'run.py'
+      - 'app.py'
       - 'requirements.txt'
       - '.github/workflows/ci.yml'
 
@@ -38,4 +40,6 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run Tests
-      run: python -m pytest
+      run: |
+        python -m pytest tests/test_ace.py
+        python -m pytest tests/test_api.py

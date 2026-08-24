@@ -4,3 +4,8 @@ scipy
 scikit-learn
 boto3
 pytest
+fastapi
+uvicorn
+python-multipart
+httpx
+httpx2
