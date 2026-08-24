@@ -93,6 +93,44 @@ To run the automated tests locally, make sure you have the dependencies installe
 python -m pytest tests/
 ```
 
+## REST API Interface
+
+The ACE framework can be run as a RESTful web service (`app.py`) to expose clustering-as-a-service (CaaS) capabilities. 
+
+### Launching the Service
+```bash
+uvicorn app:app --host 0.0.0.0 --port 8000
+```
+
+### Endpoints
+
+#### 1. Execute Clustering Job (`POST /cluster`)
+Accepts a dataset file and runs clustering in either local or AWS execution modes. 
+* **Local Mode (`mode: local`)**: Free and requires no authentication.
+* **AWS Mode (`mode: aws`)**: Requires a valid API key passed in the `X-API-Key` header.
+* **One-Time Key Policy**: Temporary keys are marked as spent in `keys.json` immediately upon their first AWS execution to prevent billing abuse.
+
+**Example Request (Local Mode):**
+```bash
+curl -X POST "http://localhost:8000/cluster" \
+  -H "accept: application/json" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@Dataset/letter.csv" \
+  -F "algo=HAC" \
+  -F "mode=local" \
+  -F "n_clusters=3"
+```
+
+#### 2. Temporary Key Generation (`POST /admin/generate-key`)
+Used by administrators to generate one-time use API keys (UUIDs) for AWS runs.
+* **Authentication**: Requires the master admin key (`aws-secret-admin-key`) in the `X-API-Key` header.
+
+**Example Request:**
+```bash
+curl -X POST "http://localhost:8000/admin/generate-key" \
+  -H "X-API-Key: aws-secret-admin-key"
+```
+
 ## Docker Usage
 
 
