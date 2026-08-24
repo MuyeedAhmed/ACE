@@ -1,15 +1,6 @@
 name: CI Pipeline
 
 on:
-  push:
-    branches: [ "main" ]
-    paths:
-      - 'ACE/**'
-      - 'tests/**'
-      - 'run.py'
-      - 'app.py'
-      - 'requirements.txt'
-      - '.github/workflows/ci.yml'
   pull_request:
     branches: [ "main" ]
     paths:

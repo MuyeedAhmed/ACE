@@ -1,15 +1,8 @@
 name: CI Distributed Pipeline
 
 on:
-  push:
-    branches: [ "**" ]
-    paths:
-      - 'DistributedACE/**'
-      - 'tests/test_worker.py'
-      - 'requirements.txt'
-      - '.github/workflows/ci-distributed.yml'
   pull_request:
-    branches: [ "**" ]
+    branches: [ "main" ]
     paths:
       - 'DistributedACE/**'
       - 'tests/test_worker.py'
