@@ -40,4 +40,6 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run Tests
-      run: python -m pytest
+      run: |
+        python -m pytest tests/test_ace.py
+        python -m pytest tests/test_api.py
