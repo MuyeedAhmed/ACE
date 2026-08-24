@@ -4,6 +4,9 @@ import shutil
 import subprocess
 import tempfile
 import uuid
+import json
+import datetime
+import threading
 from typing import Optional
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Header, status, BackgroundTasks
 from fastapi.responses import FileResponse
@@ -15,15 +18,56 @@ app = FastAPI(
 )
 
 API_KEY = os.getenv("ACE_API_KEY", "aws-secret-admin-key")
+KEYS_FILE = "keys.json"
+keys_lock = threading.Lock()
+
+def save_keys(keys_data):
+    with keys_lock:
+        with open(KEYS_FILE, "w") as f:
+            json.dump(keys_data, f, indent=2)
+
+def load_keys():
+    master_key = os.getenv("ACE_API_KEY", "aws-secret-admin-key")
+    if not os.path.exists(KEYS_FILE):
+        data = {
+            "keys": {
+                master_key: {
+                    "one_time": False,
+                    "used": False,
+                    "created_at": str(datetime.date.today())
+                }
+            }
+        }
+        save_keys(data)
+        return data
+        
+    with keys_lock:
+        with open(KEYS_FILE, "r") as f:
+            try:
+                data = json.load(f)
+                # Ensure master key is always present in memory/state
+                if "keys" not in data:
+                    data = {"keys": {}}
+                if master_key not in data["keys"]:
+                    data["keys"][master_key] = {
+                        "one_time": False,
+                        "used": False,
+                        "created_at": str(datetime.date.today())
+                    }
+                return data
+            except json.JSONDecodeError:
+                return {"keys": {}}
 
 @app.get("/")
 def read_root():
     return {
         "message": "Welcome to the ACE Clustering API",
         "docs_url": "/docs",
+        "note": "AWS distributed mode requires an API key. To get a one-time use API key, please send an email request to ma234@njit.edu.",
         "endpoints": {
             "POST /cluster": "Upload a CSV dataset and run clustering (Local or AWS mode)",
-            "GET /algorithms": "List available clustering algorithms"
+            "GET /algorithms": "List available clustering algorithms",
+            "POST /admin/generate-key": "Generate a new temporary one-time use API key (Admin only)"
         }
     }
 
@@ -36,6 +80,25 @@ def get_algorithms():
         "SC": "Spectral Clustering",
         "AP": "Affinity Propagation"
     }
+
+@app.post("/admin/generate-key")
+def generate_key(x_api_key: Optional[str] = Header(None)):
+    master_key = os.getenv("ACE_API_KEY", "aws-secret-admin-key")
+    if not x_api_key or x_api_key != master_key:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized. Master API key required in X-API-Key header."
+        )
+        
+    new_key = f"ace-temp-{uuid.uuid4()}"
+    keys_data = load_keys()
+    keys_data["keys"][new_key] = {
+        "one_time": True,
+        "used": False,
+        "created_at": str(datetime.date.today())
+    }
+    save_keys(keys_data)
+    return {"api_key": new_key, "detail": "One-time use API key generated successfully."}
 
 @app.post("/cluster")
 def run_clustering_endpoint(
@@ -54,11 +117,31 @@ def run_clustering_endpoint(
         raise HTTPException(status_code=400, detail="Invalid mode. Must be 'local' or 'aws'.")
     
     if mode == "aws":
-        if not x_api_key or x_api_key != API_KEY:
+        if not x_api_key:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid or missing X-API-Key header. AWS mode is restricted."
             )
+            
+        keys_data = load_keys()
+        all_keys = keys_data.get("keys", {})
+        
+        if x_api_key not in all_keys:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid API Key. Access denied."
+            )
+            
+        key_info = all_keys[x_api_key]
+        if key_info.get("used", False):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="This API Key has already been used. Please request a new one."
+            )
+            
+        if key_info.get("one_time", False):
+            key_info["used"] = True
+            save_keys(keys_data)
             
     temp_dir = tempfile.mkdtemp()
     
